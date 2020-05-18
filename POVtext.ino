@@ -44,6 +44,7 @@ enum DispState {
 DispState dispState;
 int dispPos;
 CRGB col;
+int brightness = 10;
  
 
 
@@ -69,7 +70,7 @@ void setup(){
   M5.Lcd.printf("Ready");
   dispState = Done;
   dispPos = 0;
-  col = CRGB(255, 0, 255);
+  col = CRGB(brightness, 0, brightness);
 }
 
 void test() {
@@ -78,6 +79,19 @@ void test() {
         
           fnp.leds[i] = col;
         
+      }
+     
+      while(1) {
+        M5.update();
+        if (M5.BtnA.wasReleased()) {
+          fnp.update();
+        }
+        if (M5.BtnB.wasReleased()) {
+          fnp.off();
+        }
+        delay(10);
+        M5.Lcd.setCursor(10, 40);
+        //M5.Lcd.printf("%d ", i);
       }
       fnp.update();
         
@@ -98,6 +112,19 @@ void loop() {
   //while(1);
    
   if(dispState != Disp) {
+    M5.update();
+    if (M5.BtnA.wasReleased()) {
+      brightness+=50;
+      if(brightness > 250) {
+        brightness = 50;
+      }
+      col = CRGB(brightness, 0, brightness);
+      for(i = 0; i < 5; i++) {
+          fnp.leds[i] = col;
+      }
+      fnp.update();
+      delay(1000);
+    }
   //M5.IMU.getGyroData(&gyroX,&gyroY,&gyroZ);
   M5.IMU.getAccelData(&accX,&accY,&accZ);
   //M5.IMU.getAhrsData(&pitch,&roll,&yaw);
