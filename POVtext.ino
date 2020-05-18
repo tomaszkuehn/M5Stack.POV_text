@@ -161,14 +161,16 @@ void loop() {
       for(i = 0; i < 5; i++) {
         if(myText[dispPos][i]) {
           fnp.leds[i] = col;
+          fnp.leds[9-i] = col;
         }
         else
         {
           fnp.leds[i] = 0;
+          fnp.leds[9-i] = 0;
         }
       }
       fnp.update();
-      delayMicroseconds(1600);
+      delayMicroseconds(2600);
       //M5.Lcd.setCursor(10, 220);
       //M5.Lcd.printf("%d ", dispPos);
     }
