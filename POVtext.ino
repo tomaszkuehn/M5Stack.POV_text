@@ -100,9 +100,9 @@ void loop() {
   if(dispState != Disp) {
   //M5.IMU.getGyroData(&gyroX,&gyroY,&gyroZ);
   M5.IMU.getAccelData(&accX,&accY,&accZ);
-  M5.IMU.getAhrsData(&pitch,&roll,&yaw);
+  //M5.IMU.getAhrsData(&pitch,&roll,&yaw);
   //M5.IMU.getTempData(&temp);
-  
+  /*
   M5.Lcd.setCursor(0, 40);
   M5.Lcd.printf("%6.2f  %6.2f  %6.2f      ", gyroX, gyroY, gyroZ);
   //M5.Lcd.setCursor(220, 42);
@@ -117,10 +117,10 @@ void loop() {
   //M5.Lcd.print(" degree");
   //M5.Lcd.setCursor(0, 155);
   //M5.Lcd.printf("Temperature : %.2f C", Atemp.get());
-  
+  */
   }
   
-  if(dispState == Start && accZ < 0.8) {
+  if(dispState == Start && accZ < 0.75) {
     dispState = Disp;
     //M5.Lcd.fillRect(0, 0, 320, 240, TFT_BLACK);
   }
@@ -130,9 +130,9 @@ void loop() {
 
   if(dispState == Disp) {
     
-    if(dispPos < 240) {
+    if(dispPos < 60) {
       for(i = 0; i < 5; i++) {
-        if(myText[dispPos % 60][i]) {
+        if(myText[dispPos][i]) {
           fnp.leds[i] = col;
         }
         else
@@ -142,10 +142,10 @@ void loop() {
       }
       fnp.update();
       delayMicroseconds(1600);
-      M5.Lcd.setCursor(10, 220);
-      M5.Lcd.printf("%d ", dispPos);
+      //M5.Lcd.setCursor(10, 220);
+      //M5.Lcd.printf("%d ", dispPos);
     }
-    if(dispPos >= 240){
+    if(dispPos >= 60){
       dispState = Done;
       dispPos = 0;
       fnp.off();
