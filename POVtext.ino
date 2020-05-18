@@ -43,6 +43,8 @@ enum DispState {
 
 DispState dispState;
 int dispPos;
+CRGB col;
+ 
 
 
 // the setup routine runs once when M5Stack starts up
@@ -67,11 +69,33 @@ void setup(){
   M5.Lcd.printf("Ready");
   dispState = Done;
   dispPos = 0;
+  col = CRGB(255, 0, 255);
+}
+
+void test() {
+  
+      for(int i = 0; i < 3; i++) {
+        
+          fnp.leds[i] = col;
+        
+      }
+      fnp.update();
+        
+        delay(1000);
+        fnp.off();
+        //fnp.update();
+        delay(1000);
+        fnp.on();
+       
+        M5.Lcd.printf("Done");
 }
 
 // the loop routine runs over and over again forever
 void loop() {
   int i;
+
+  //test();
+  //while(1);
    
   if(dispState != Disp) {
   //M5.IMU.getGyroData(&gyroX,&gyroY,&gyroZ);
@@ -79,8 +103,8 @@ void loop() {
   M5.IMU.getAhrsData(&pitch,&roll,&yaw);
   //M5.IMU.getTempData(&temp);
   
-  //M5.Lcd.setCursor(0, 20);
-  //M5.Lcd.printf("%6.2f  %6.2f  %6.2f      ", gyroX, gyroY, gyroZ);
+  M5.Lcd.setCursor(0, 40);
+  M5.Lcd.printf("%6.2f  %6.2f  %6.2f      ", gyroX, gyroY, gyroZ);
   //M5.Lcd.setCursor(220, 42);
   //M5.Lcd.print(" o/s");
   M5.Lcd.setCursor(0, 65);
@@ -105,13 +129,10 @@ void loop() {
   }
 
   if(dispState == Disp) {
-    CRGB col;
- 
-    col = CRGB(255, 0, 255);
-    if(dispPos < 60) {
-      //fnp.off();
+    
+    if(dispPos < 240) {
       for(i = 0; i < 5; i++) {
-        if(myText[dispPos][i]) {
+        if(myText[dispPos % 60][i]) {
           fnp.leds[i] = col;
         }
         else
@@ -120,11 +141,11 @@ void loop() {
         }
       }
       fnp.update();
-      delayMicroseconds(1800);
+      delayMicroseconds(1600);
       M5.Lcd.setCursor(10, 220);
       M5.Lcd.printf("%d ", dispPos);
     }
-    if(dispPos >= 60){
+    if(dispPos >= 240){
       dispState = Done;
       dispPos = 0;
       fnp.off();
@@ -134,5 +155,4 @@ void loop() {
       dispPos++;
     }
   }
-  //delay(1);
 }

@@ -17,7 +17,7 @@
 #define M5STACK_FIRE_NUM_LEDS 10
 #define M5STACK_FIRE_NEO_DATA_PIN 15
 
-class FireNeopixels {
+class FireNeopixels: public CFastLED {
   public:
     FireNeopixels() {
       FastLED.addLeds<WS2812B, M5STACK_FIRE_NEO_DATA_PIN, GRB>(leds, M5STACK_FIRE_NUM_LEDS);
@@ -29,10 +29,15 @@ class FireNeopixels {
       FastLED.show();
     }
     void off() {
-      for(int i = 0; i < M5STACK_FIRE_NUM_LEDS; i++) {   
-        leds[i] = 0;
-      }
+      memcpy(leds_cp, leds, sizeof(leds));
+      FastLED.clearData();
       FastLED.show();
     }
-    CRGB leds[M5STACK_FIRE_NUM_LEDS]; // array of leds
+    void on() {
+      memcpy(leds, leds_cp, sizeof(leds));
+      FastLED.show();
+    }
+    CRGB leds   [M5STACK_FIRE_NUM_LEDS]; // array of leds
+  private:
+    CRGB leds_cp[M5STACK_FIRE_NUM_LEDS];
 };
