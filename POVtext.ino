@@ -62,7 +62,7 @@ void setup(){
     
   M5.IMU.Init();
 
-  M5.Lcd.setBrightness(50);
+  M5.Lcd.setBrightness(10);
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setTextColor(GREEN , BLACK);
   M5.Lcd.setTextSize(2);
@@ -153,6 +153,8 @@ void loop() {
   }
   if(dispState == Done && accZ > 0.85) {
     dispState = Start;
+    fnp.leds[0] = CRGB(0, 1, 0);
+    fnp.update();
   }
 
   if(dispState == Disp) {
