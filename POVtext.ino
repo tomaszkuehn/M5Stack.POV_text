@@ -118,10 +118,11 @@ void loop() {
       if(brightness > 250) {
         brightness = 50;
       }
+      fnp.off();
       col = CRGB(brightness, 0, brightness);
-      for(i = 0; i < 5; i++) {
-          fnp.leds[i] = col;
-      }
+      i = brightness/50;
+      if(i > 0) {i--;}
+      fnp.leds[i] = col;
       fnp.update();
       delay(1000);
     }
