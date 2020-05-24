@@ -43,6 +43,9 @@ enum DispState {
 
 DispState dispState;
 int dispPos;
+CRGB col;
+int brightness = 10;
+ 
 
 
 // the setup routine runs once when M5Stack starts up
@@ -59,7 +62,7 @@ void setup(){
     
   M5.IMU.Init();
 
-  M5.Lcd.setBrightness(50);
+  M5.Lcd.setBrightness(10);
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setTextColor(GREEN , BLACK);
   M5.Lcd.setTextSize(2);
@@ -67,20 +70,68 @@ void setup(){
   M5.Lcd.printf("Ready");
   dispState = Done;
   dispPos = 0;
+  col = CRGB(brightness, 0, brightness);
+}
+
+void test() {
+  
+      for(int i = 0; i < 3; i++) {
+        
+          fnp.leds[i] = col;
+        
+      }
+     
+      while(1) {
+        M5.update();
+        if (M5.BtnA.wasReleased()) {
+          fnp.update();
+        }
+        if (M5.BtnB.wasReleased()) {
+          fnp.off();
+        }
+        delay(10);
+        M5.Lcd.setCursor(10, 40);
+        //M5.Lcd.printf("%d ", i);
+      }
+      fnp.update();
+        
+        delay(1000);
+        fnp.off();
+        //fnp.update();
+        delay(1000);
+        fnp.on();
+       
+        M5.Lcd.printf("Done");
 }
 
 // the loop routine runs over and over again forever
 void loop() {
   int i;
+
+  //test();
+  //while(1);
    
   if(dispState != Disp) {
+    M5.update();
+    if (M5.BtnA.wasReleased()) {
+      brightness+=50;
+      if(brightness > 250) {
+        brightness = 50;
+      }
+      col = CRGB(brightness, 0, brightness);
+      for(i = 0; i < 5; i++) {
+          fnp.leds[i] = col;
+      }
+      fnp.update();
+      delay(1000);
+    }
   //M5.IMU.getGyroData(&gyroX,&gyroY,&gyroZ);
   M5.IMU.getAccelData(&accX,&accY,&accZ);
-  M5.IMU.getAhrsData(&pitch,&roll,&yaw);
+  //M5.IMU.getAhrsData(&pitch,&roll,&yaw);
   //M5.IMU.getTempData(&temp);
-  
-  //M5.Lcd.setCursor(0, 20);
-  //M5.Lcd.printf("%6.2f  %6.2f  %6.2f      ", gyroX, gyroY, gyroZ);
+  /*
+  M5.Lcd.setCursor(0, 40);
+  M5.Lcd.printf("%6.2f  %6.2f  %6.2f      ", gyroX, gyroY, gyroZ);
   //M5.Lcd.setCursor(220, 42);
   //M5.Lcd.print(" o/s");
   M5.Lcd.setCursor(0, 65);
@@ -93,36 +144,37 @@ void loop() {
   //M5.Lcd.print(" degree");
   //M5.Lcd.setCursor(0, 155);
   //M5.Lcd.printf("Temperature : %.2f C", Atemp.get());
-  
+  */
   }
   
-  if(dispState == Start && accZ < 0.8) {
+  if(dispState == Start && accZ < 0.75) {
     dispState = Disp;
     //M5.Lcd.fillRect(0, 0, 320, 240, TFT_BLACK);
   }
   if(dispState == Done && accZ > 0.85) {
     dispState = Start;
+    fnp.leds[0] = CRGB(0, 1, 0);
+    fnp.update();
   }
 
   if(dispState == Disp) {
-    CRGB col;
- 
-    col = CRGB(255, 0, 255);
+    
     if(dispPos < 60) {
-      //fnp.off();
       for(i = 0; i < 5; i++) {
         if(myText[dispPos][i]) {
           fnp.leds[i] = col;
+          fnp.leds[9-i] = col;
         }
         else
         {
           fnp.leds[i] = 0;
+          fnp.leds[9-i] = 0;
         }
       }
       fnp.update();
-      delayMicroseconds(1800);
-      M5.Lcd.setCursor(10, 220);
-      M5.Lcd.printf("%d ", dispPos);
+      delayMicroseconds(2600);
+      //M5.Lcd.setCursor(10, 220);
+      //M5.Lcd.printf("%d ", dispPos);
     }
     if(dispPos >= 60){
       dispState = Done;
@@ -134,5 +186,4 @@ void loop() {
       dispPos++;
     }
   }
-  //delay(1);
 }
